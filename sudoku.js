@@ -76,7 +76,6 @@ var startResolver = function () {
 	
 	STOP = false;
 
-
 	var buildSudoku = function () {
 		for (var x = 0; x < 9; x++) {
 			for (var y = 0; y < 9; y++) {
@@ -98,21 +97,26 @@ var startResolver = function () {
 	}
 
 	var getAllCellsInSameRegion = function ($cell) {
-		var sudokuRegions = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
 		var row = getCellRow($cell);
 		var col = getCellColumn($cell);
 
 		var regionRows;
-		var regionColumns;
+		if (row >= 0 && row <= 2) {
+			regionRows = [0, 1, 2];
+		} else if (row >= 3 && row <= 5) {
+			regionRows = [3, 4, 5];
+		} else if (row >= 6 && row <= 8) {
+			regionRows = [6, 7, 8];
+		}
 
-		$(sudokuRegions).each(function (index, elem) {
-			if ($.inArray(row, elem) !== -1) {
-				regionRows = elem;
-			}
-			if ($.inArray(col, elem) !== -1) {
-				regionColumns = elem;
-			}
-		});
+		var regionColumns;
+		if (col >= 0 && col <= 2) {
+			regionColumns = [0, 1, 2];
+		} else if (col >= 3 && col <= 5) {
+			regionColumns = [3, 4, 5];
+		} else if (col >= 6 && col <= 8) {
+			regionColumns = [6, 7, 8];
+		}
 
 		var cellsInRegion = [];
 		$(regionRows).each(function (index, rowNumber) {
