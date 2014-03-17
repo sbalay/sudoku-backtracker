@@ -1,10 +1,6 @@
-
-var validate = false;
-
 $(document).ready(function() {
 
 	// <INIT TABLE>
-
 	var mainContainer = $('.main-container');
 	for (var x = 0; x < 9; x++) {
 		for (var y = 0; y < 9; y++) {
@@ -16,8 +12,6 @@ $(document).ready(function() {
 	// </ INIT TABLE>
 
 	// <CELL KEYDOWN EVENT
-
-
 	var validateKey = function (e) {
 		// Allow: backspace, delete, tab, escape
 		if ($.inArray(e.keyCode, [46, 8, 9, 27]) !== -1 ||
@@ -52,7 +46,6 @@ $(document).ready(function() {
 		// Replace the cell content with the new value
 		$(e.currentTarget).val("");
 	});
-
 	// </ CELL KEYDOWN EVENT>
 
 });
@@ -73,6 +66,7 @@ var startResolver = function () {
 	$('.startButton').hide();
 	$('.cleanButton').hide();
 	$('.timer').hide();
+	$('.timer-label').hide();
 	
 	STOP = false;
 
@@ -119,11 +113,11 @@ var startResolver = function () {
 		}
 
 		var cellsInRegion = [];
-		$(regionRows).each(function (index, rowNumber) {
-			$(regionColumns).each(function (indexx, colNumber) {
-				cellsInRegion.push(getCellInPosition(rowNumber, colNumber));
-			});
-		});
+		for (var r = regionRows[0]; r < regionRows[2] + 1; r++ ) {
+			for (var c = regionColumns[0]; c < regionColumns[2] + 1; c++ ) {
+		 		cellsInRegion.push(getCellInPosition(r, c));
+		 	}
+		}
 
 		return $(cellsInRegion);
 	}
@@ -181,6 +175,11 @@ var startResolver = function () {
 	}
 
 	var tryValueOnCell = function (value, $cell, back) {
+		if (!$cell.length) {
+			alert("Listo!");
+			console.timeEnd('sudoku');
+			return;
+		}
 		if (STOP) {
 			return;
 		}
@@ -214,6 +213,7 @@ var startResolver = function () {
 	}
 
 	buildSudoku();
+	console.time('sudoku');
 	tryValueOnCell(1, getCellInPosition(0, 0));
 }
 
@@ -233,6 +233,7 @@ var stopResolver = function () {
 	}, 250);
 
 	$('.timer').show();
+	$('.timer-label').show();
 	$('.stopButton').hide();
 	$('.startButton').show();
 	$('.cleanButton').show();
