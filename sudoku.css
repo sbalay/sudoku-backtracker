@@ -1,0 +1,42 @@
+input {
+	outline: none;
+	-webkit-appearance: none;
+	border: none;
+}
+
+.main-container {
+	margin: 20px;
+	width: 212px;
+}
+
+.timer {
+	border: 1px solid;
+}
+
+.written {
+	font-weight: bold;
+}
+
+.cell {
+	padding-left: 7px;
+	width: 14px;
+	height: 20px;
+	border-left: 1px solid;
+	border-bottom: 1px solid;
+}
+
+.cell.row0 {
+	border-top: 1px solid;
+}
+
+.cell.col8 {
+	border-right: 1px solid;
+}
+
+.cell.row2, .cell.row5 {
+	border-bottom: 2px solid;
+}
+
+.cell.col2, .cell.col5 {
+	border-right: 2px solid;
+}
