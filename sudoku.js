@@ -1,11 +1,19 @@
+
+var CacheItem = function (cell, row, column) {
+	return {'cell': cell, 'row':row, 'column':column};
+}
+
+var cache = [];
+
 $(document).ready(function() {
 
 	// <INIT TABLE>
 	var mainContainer = $('.main-container');
 	for (var x = 0; x < 9; x++) {
 		for (var y = 0; y < 9; y++) {
-			var cell = "<input type='text' class='cell row" + x + " col" + y + "'></input>";
-			mainContainer.append(cell);
+			var $cell = $("<input type='text' class='cell row" + x + " col" + y + "'></input>");
+			mainContainer.append($cell);
+			cache.push(new CacheItem($cell, x, y));
 		}
 	}
 	$('.stopButton').hide();
@@ -51,7 +59,15 @@ $(document).ready(function() {
 });
 
 var getCellInPosition = function (rowNumber, colNumber) {
-	return $('.row' + rowNumber + '.col' + colNumber).eq(0);
+	for (var i = 0; i < cache.length; i++) {
+		if (cache[i].row === rowNumber) {
+			if (cache[i].column === colNumber) {
+				return cache[i].cell;
+			}
+		} else {
+			i += 8;		
+		}
+	}
 }
 
 var startResolver = function () {
@@ -118,14 +134,28 @@ var startResolver = function () {
 		 		cellsInRegion.push(getCellInPosition(r, c));
 		 	}
 		}
-
-		return $(cellsInRegion);
+		return cellsInRegion;
 	}
 	var getAllCellsInRow = function (rowNumber) {
-		return $('.row' + rowNumber);
+		var retList = [];
+		for (var i = 0; i < cache.length; i++) {
+			if (cache[i].row === rowNumber) {
+				retList.push(cache[i].cell);
+			} else {
+				i += 8;		
+			}
+		}
+		return retList;
 	}
 	var getAllCellsInColumn = function (colNumber) {
-		return $('.col' + colNumber);
+		var retList = [];
+		for (var i = 0; i < cache.length; i++) {
+			if (cache[i].column === colNumber) {
+				retList.push(cache[i].cell);
+				i += 8;		
+			}
+		}
+		return retList;
 	}
 
 	var getNextCell = function ($cell) {
@@ -149,23 +179,38 @@ var startResolver = function () {
 
 	var validateRows = function (value, $cell) {
 		var validation = true;
-		getAllCellsInRow(getCellRow($cell)).each(function (index, elem) {
-			validation = validation && $(elem).val() != value;
-		});
+		var cellsToValidate = getAllCellsInRow(getCellRow($cell));
+
+		for (var i = 0; i < cellsToValidate.length; i++) {
+			validation = validation && cellsToValidate[i].val() != value;
+			if (!validation) {
+				break;
+			}
+		}
 		return validation;
 	}
 	var validateColumns = function (value, $cell) {
 		var validation = true;
-		getAllCellsInColumn(getCellColumn($cell)).each(function (index, elem) {
-			validation = validation && $(elem).val() != value;
-		});
+		var cellsToValidate = getAllCellsInColumn(getCellColumn($cell));
+
+		for (var i = 0; i < cellsToValidate.length; i++) {
+			validation = validation && cellsToValidate[i].val() != value;
+			if (!validation) {
+				break;
+			}
+		}
 		return validation;
 	}
 	var validateRegion = function (value, $cell) {
 		var validation = true;
-		getAllCellsInSameRegion($cell).each(function (index, elem) {
-			validation = validation && $(elem).val() != value;
-		});
+		var cellsToValidate = getAllCellsInSameRegion($cell);
+
+		for (var i = 0; i < cellsToValidate.length; i++) {
+			validation = validation && cellsToValidate[i].val() != value;
+			if (!validation) {
+				break;
+			}
+		}
 		return validation;
 	}
 	var validate = function (value, $cell) {
@@ -175,9 +220,9 @@ var startResolver = function () {
 	}
 
 	var tryValueOnCell = function (value, $cell, back) {
-		if (!$cell.length) {
-			alert("Listo!");
+		if (!$cell) {
 			console.timeEnd('sudoku');
+			alert("Listo!");
 			return;
 		}
 		if (STOP) {
