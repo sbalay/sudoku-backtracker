@@ -1,6 +1,6 @@
 
-var CacheItem = function (cell, row, column) {
-	return {'cell': cell, 'row':row, 'column':column};
+var CacheItem = function (cell, row, column, index) {
+	return {'cell': cell, 'row':row, 'column':column, 'index':index};
 }
 
 var cache = [];
@@ -9,11 +9,13 @@ $(document).ready(function() {
 
 	// <INIT TABLE>
 	var mainContainer = $('.main-container');
+	var ind = 0;
 	for (var x = 0; x < 9; x++) {
 		for (var y = 0; y < 9; y++) {
-			var $cell = $("<input type='text' class='cell row" + x + " col" + y + "'></input>");
+			var $cell = $("<input type='text' id='ind" + ind + "'class='cell row" + x + " col" + y + "'></input>");
 			mainContainer.append($cell);
-			cache.push(new CacheItem($cell, x, y));
+			cache.push(new CacheItem($cell, x, y, ind));
+			ind += 1;
 		}
 	}
 	$('.stopButton').hide();
@@ -152,28 +154,24 @@ var startResolver = function () {
 		for (var i = 0; i < cache.length; i++) {
 			if (cache[i].column === colNumber) {
 				retList.push(cache[i].cell);
-				i += 8;		
+				i += 8;
 			}
 		}
 		return retList;
 	}
 
 	var getNextCell = function ($cell) {
-		var row = getCellRow($cell);
-		var col = getCellColumn($cell);
-		if (col !== 8) {
-			return getCellInPosition(row, col + 1);
-		} else {
-			return getCellInPosition(row + 1, 0);
+		var ind = parseInt($cell.attr("id").substring(3));
+		var cachedItem = cache[ind + 1];
+		if (cachedItem) {
+			return cachedItem.cell;
 		}
 	}
 	var getPreviousCell = function ($cell) {
-		var row = getCellRow($cell);
-		var col = getCellColumn($cell);
-		if (col !== 0) {
-			return getCellInPosition(row, col - 1);
-		} else {
-			return getCellInPosition(row - 1, 8);
+		var ind = parseInt($cell.attr("id").substring(3));
+		var cachedItem = cache[ind - 1];
+		if (cachedItem) {
+			return cachedItem.cell;
 		}
 	}
 
